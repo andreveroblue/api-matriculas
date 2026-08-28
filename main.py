@@ -56,10 +56,10 @@ def validar_matricula(datos: SolicitudMatricula):
         )
 
     # RN04 - Número de asignaturas
-    if datos.numero_asignaturas < 1 or datos.numero_asignaturas > 6:
+    if datos.numero_asignaturas < 1 or datos.numero_asignaturas > 7:
         raise HTTPException(
             status_code=400,
-            detail="El número de asignaturas debe estar entre 1 y 6"
+            detail="El número de asignaturas debe estar entre 1 y 7"
         )
 
     # Matrícula aprobada
