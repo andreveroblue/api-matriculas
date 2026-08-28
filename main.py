@@ -13,7 +13,7 @@ def validar_matricula(datos: SolicitudMatricula):
     if datos.cedula is None:
         raise HTTPException(
             status_code=400,
-            detail="La cédula es obligatoria"
+            detail="La cédula es obligatoria "
         )
 
     # RN07 - Nivel obligatorio
