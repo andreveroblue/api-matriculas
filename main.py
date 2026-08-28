@@ -27,6 +27,13 @@ def inicio():
 @app.post("/api/matriculas/validar")
 def validar_matricula(datos: SolicitudMatricula):
 
+     # RN06
+    if datos.cedula is null or datos.nivel is null:
+        raise HTTPException(
+            status_code=400,
+            detail="Los campos cedula y nivel son obligatorios revise"
+        )
+        
     # RN01
     if datos.nivel < 1 or datos.nivel > 10:
         raise HTTPException(
