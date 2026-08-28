@@ -9,8 +9,8 @@ app = FastAPI(
 
 
 class SolicitudMatricula(BaseModel):
-    cedula: str
-    nivel: int
+    cedula: str | None = None
+    nivel: int | None = None
     impedimento_academico: bool
     impedimento_financiero: bool
     numero_asignaturas: int
@@ -27,35 +27,35 @@ def inicio():
 @app.post("/api/matriculas/validar")
 def validar_matricula(datos: SolicitudMatricula):
 
-     # RN06
-   if datos.cedula is None or datos.nivel is None:
+    # RN06 - Campos obligatorios
+    if datos.cedula is None or datos.nivel is None:
         raise HTTPException(
             status_code=400,
-            detail="Los campos cedula y nivel son obligatorios revise"
+            detail="Los campos cedula y nivel son obligatorios"
         )
-        
-    # RN01
+
+    # RN01 - Nivel válido
     if datos.nivel < 1 or datos.nivel > 10:
         raise HTTPException(
             status_code=400,
             detail="El nivel académico debe estar entre 1 y 10"
         )
 
-    # RN02
+    # RN02 - Impedimento académico
     if datos.impedimento_academico:
         raise HTTPException(
             status_code=400,
             detail="El estudiante posee impedimento académico"
         )
 
-    # RN03
+    # RN03 - Impedimento financiero
     if datos.impedimento_financiero:
         raise HTTPException(
             status_code=400,
             detail="El estudiante posee impedimento financiero"
         )
 
-    # RN04
+    # RN04 - Número de asignaturas
     if datos.numero_asignaturas < 1 or datos.numero_asignaturas > 6:
         raise HTTPException(
             status_code=400,
