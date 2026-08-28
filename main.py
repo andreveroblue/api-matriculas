@@ -28,7 +28,7 @@ def inicio():
 def validar_matricula(datos: SolicitudMatricula):
 
      # RN06
-    if datos.cedula is null or datos.nivel is null:
+   if datos.cedula is None or datos.nivel is None:
         raise HTTPException(
             status_code=400,
             detail="Los campos cedula y nivel son obligatorios revise"
