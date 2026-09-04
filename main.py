@@ -8,61 +8,125 @@ app = FastAPI(
 )
 
 
+# =========================================================
+# MODELO DE DATOS
+# =========================================================
+# Los cinco campos permiten None para poder probar explícitamente
+# los casos de campos obligatorios con valor null.
 class SolicitudMatricula(BaseModel):
     cedula: str | None = None
     nivel: int | None = None
-    impedimento_academico: bool
-    impedimento_financiero: bool
-    numero_asignaturas: int
+    impedimento_academico: bool | None = None
+    impedimento_financiero: bool | None = None
+    numero_asignaturas: int | None = None
 
 
-@app.get("/")
-def inicio():
-    return {
-        "sistema": "Sistema de Matrículas",
-        "estado": "API funcionando"
-    }
+# =========================================================
+# FUNCIÓN PARA PRUEBA UNITARIA
+# =========================================================
+def validar_nivel(nivel):
+    return 1 <= nivel <= 10
 
 
+# =========================================================
+# ENDPOINT
+# =========================================================
 @app.post("/api/matriculas/validar")
 def validar_matricula(datos: SolicitudMatricula):
 
-    # RN06 - Cédula y nivel son obligatorios
-    if datos.cedula is None or datos.nivel is None:
+    # -----------------------------------------------------
+    # R01 - CAMPOS OBLIGATORIOS
+    # -----------------------------------------------------
+
+    if datos.cedula is None:
         raise HTTPException(
             status_code=400,
-            detail="Los campos cédula y nivel son obligatorios"
+            detail="La cédula es obligatoria"
         )
 
-    # RN01 - Validación del nivel
-    if datos.nivel < 1 or datos.nivel > 10:
+    if datos.nivel is None:
+        raise HTTPException(
+            status_code=400,
+            detail="El nivel es obligatorio"
+        )
+
+    if datos.numero_asignaturas is None:
+        raise HTTPException(
+            status_code=400,
+            detail="El número de asignaturas es obligatorio"
+        )
+
+    if datos.impedimento_academico is None:
+        raise HTTPException(
+            status_code=400,
+            detail="El impedimento académico es obligatorio"
+        )
+
+    if datos.impedimento_financiero is None:
+        raise HTTPException(
+            status_code=400,
+            detail="El impedimento financiero es obligatorio"
+        )
+
+    # -----------------------------------------------------
+    # R02 - NIVEL ACADÉMICO ENTRE 1 Y 10
+    # -----------------------------------------------------
+
+    if not validar_nivel(datos.nivel):
         raise HTTPException(
             status_code=400,
             detail="El nivel académico debe estar entre 1 y 10"
         )
 
-    # RN02 - Impedimento académico
-    if datos.impedimento_academico:
-        raise HTTPException(
-            status_code=400,
-            detail="El estudiante posee impedimento académico"
-        )
+    # -----------------------------------------------------
+    # R03 - NÚMERO DE ASIGNATURAS ENTRE 1 Y 7
+    # -----------------------------------------------------
 
-    # RN03 - Impedimento financiero
-    if datos.impedimento_financiero:
-        raise HTTPException(
-            status_code=400,
-            detail="El estudiante posee impedimento financiero"
-        )
-
-    # RN04 - Número de asignaturas
     if datos.numero_asignaturas < 1 or datos.numero_asignaturas > 7:
         raise HTTPException(
             status_code=400,
             detail="El número de asignaturas debe estar entre 1 y 7"
         )
 
-    # Matrícula aprobada
+    # -----------------------------------------------------
+    # R04 + R05
+    # AMBOS IMPEDIMENTOS
+    # -----------------------------------------------------
+
+    if (
+        datos.impedimento_academico is True
+        and datos.impedimento_financiero is True
+    ):
+        raise HTTPException(
+            status_code=400,
+            detail="El estudiante posee impedimento académico y financiero"
+        )
+
+    # -----------------------------------------------------
+    # R04 - IMPEDIMENTO ACADÉMICO
+    # -----------------------------------------------------
+
+    if datos.impedimento_academico is True:
+        raise HTTPException(
+            status_code=400,
+            detail="El estudiante posee impedimento académico"
+        )
+
+    # -----------------------------------------------------
+    # R05 - IMPEDIMENTO FINANCIERO
+    # -----------------------------------------------------
+
+    if datos.impedimento_financiero is True:
+        raise HTTPException(
+            status_code=400,
+            detail="El estudiante posee impedimento financiero"
+        )
+
+    # -----------------------------------------------------
+    # R06 + R07
+    # MATRÍCULA APROBADA Y ORDEN DE PAGO
+    # -----------------------------------------------------
+
     return {
         "cedula": datos.cedula,
         "nivel": datos.nivel,
@@ -70,4 +134,14 @@ def validar_matricula(datos: SolicitudMatricula):
         "puede_matricularse": True,
         "orden_pago": "GENERADA",
         "mensaje": "El estudiante cumple los requisitos de matrícula"
+    }
+
+
+# =========================================================
+# ENDPOINT DE COMPROBACIÓN
+# =========================================================
+@app.get("/")
+def inicio():
+    return {
+        "mensaje": "Sistema de Matrículas funcionando"
     }
