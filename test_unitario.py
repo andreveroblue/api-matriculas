@@ -1,6 +1,5 @@
 from main import validar_nivel
 
-
 def test_nivel_valido():
     resultado = validar_nivel(5)
     assert resultado is True
