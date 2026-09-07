@@ -1,3 +1,4 @@
+# DEFECTO INTENCIONAL PARA LA PRÁCTICA
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
@@ -89,7 +90,7 @@ def validar_matricula(datos: SolicitudMatricula):
         )
 
     # -----------------------------------------------------
-    # R04 + R05
+    # R06 - DOBLE IMPEDIMENTO
     # AMBOS IMPEDIMENTOS
     # -----------------------------------------------------
 
@@ -99,7 +100,7 @@ def validar_matricula(datos: SolicitudMatricula):
     ):
         raise HTTPException(
             status_code=400,
-            detail="El estudiante posee impedimento académico y financiero"
+            detail="El estudiante posee impedimento académico"
         )
 
     # -----------------------------------------------------
@@ -123,8 +124,8 @@ def validar_matricula(datos: SolicitudMatricula):
         )
 
     # -----------------------------------------------------
-    # R06 + R07
-    # MATRÍCULA APROBADA Y ORDEN DE PAGO
+    # R07 - MATRÍCULA APROBADA
+    # R08 - ORDEN DE PAGO
     # -----------------------------------------------------
 
     return {
@@ -145,3 +146,4 @@ def inicio():
     return {
         "mensaje": "Sistema de Matrículas funcionando"
     }
+
