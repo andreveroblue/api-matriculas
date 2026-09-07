@@ -30,11 +30,11 @@ def test_CP01_nivel_valido():
 
 
 # =========================================================
-# CP02 - NIVEL MENOR A 1
+# CP02 - LÍMITE INFERIOR INVÁLIDO = 0
 # =========================================================
 def test_CP02_nivel_menor_al_minimo():
     datos = datos_base()
-    datos["nivel"] = -2
+    datos["nivel"] = 0
 
     response = client.post(
         "/api/matriculas/validar",
@@ -48,11 +48,11 @@ def test_CP02_nivel_menor_al_minimo():
 
 
 # =========================================================
-# CP03 - NIVEL MAYOR A 10
+# CP03 - LÍMITE SUPERIOR INVÁLIDO = 11
 # =========================================================
 def test_CP03_nivel_mayor_al_maximo():
     datos = datos_base()
-    datos["nivel"] = 12
+    datos["nivel"] = 11
 
     response = client.post(
         "/api/matriculas/validar",
@@ -160,7 +160,6 @@ def test_CP09_asignaturas_sobre_maximo():
         "El número de asignaturas debe estar entre 1 y 7"
     )
 
-
 # =========================================================
 # CP10 - DOBLE IMPEDIMENTO
 # =========================================================
@@ -176,7 +175,7 @@ def test_CP10_doble_impedimento():
 
     assert response.status_code == 400
     assert response.json()["detail"] == (
-        "El estudiante posee impedimento académico"
+        "El estudiante posee impedimento académico y financiero"
     )
 
 
