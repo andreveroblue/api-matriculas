@@ -1,0 +1,48 @@
+image: python:3.12
+
+stages:
+  - test
+
+before_script:
+  - python --version
+  - python -m pip install --upgrade pip
+  - python -m pip install -r requirements.txt
+
+pruebas_unitarias:
+  stage: test
+  script: 
+     - python -m pytest test_unitario.py -v --junitxml=report-unitarias.xml
+  artifacts:
+    when: always
+    paths:
+      - report-unitarias.xml
+    reports:
+      junit: report-unitarias.xml
+
+pruebas_automatizadas_api:
+  stage: test
+  script:
+    - python -m pytest test_matricula.py -v --junitxml=report-api.xml
+  artifacts:
+    when: always
+    paths:
+      - report-api.xml
+    reports:
+      junit: report-api.xml
+
+cobertura_codigo:
+  stage: test
+  script:
+    - python -m coverage run --source=main -m pytest test_unitario.py test_matricula.py
+  after_script:
+    - python -m coverage report -m
+    - python -m coverage xml -o coverage.xml
+  coverage: '/TOTAL.*\s+(\d+%)/'
+  artifacts:
+    when: always
+    paths:
+      - coverage.xml
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml 
